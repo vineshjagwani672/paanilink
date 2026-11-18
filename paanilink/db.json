@@ -1,0 +1,172 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Customer Demo",
+      "email": "customer@paanilink.test",
+      "password": "customer123",
+      "role": "customer",
+      "cnic": "3520112345671",
+      "phone": "03001234567",
+      "zoneId": 1,
+      "subsidyStatus": "Approved"
+    },
+    {
+      "id": 2,
+      "name": "Zone Officer Demo",
+      "email": "officer@paanilink.test",
+      "password": "officer123",
+      "role": "zone-officer",
+      "zoneId": 1
+    },
+    {
+      "id": 3,
+      "name": "Hydrant Operator Demo",
+      "email": "operator@paanilink.test",
+      "password": "operator123",
+      "role": "hydrant-operator",
+      "hydrantId": 1
+    },
+    {
+      "id": 4,
+      "name": "Driver Demo",
+      "email": "driver@paanilink.test",
+      "password": "driver123",
+      "role": "driver",
+      "status": "Available"
+    },
+    {
+      "id": 5,
+      "name": "Administrator Demo",
+      "email": "admin@paanilink.test",
+      "password": "admin123",
+      "role": "admin"
+    }
+  ],
+  "zones": [
+    {
+      "id": 1,
+      "name": "Zone A"
+    },
+    {
+      "id": 2,
+      "name": "Zone B"
+    }
+  ],
+  "hydrants": [
+    {
+      "id": 1,
+      "name": "Hydrant North",
+      "zoneId": 1,
+      "dailyQuota": 6000,
+      "usedQuota": 2000,
+      "status": "Available"
+    },
+    {
+      "id": 2,
+      "name": "Hydrant East",
+      "zoneId": 2,
+      "dailyQuota": 5000,
+      "usedQuota": 1500,
+      "status": "Available"
+    }
+  ],
+  "tankers": [
+    {
+      "id": 1,
+      "registration": "T-1001",
+      "size": 3000,
+      "status": "Available",
+      "hydrantId": 1
+    },
+    {
+      "id": 2,
+      "registration": "T-1002",
+      "size": 1000,
+      "status": "Available",
+      "hydrantId": 1
+    },
+    {
+      "id": 3,
+      "registration": "T-2001",
+      "size": 6000,
+      "status": "Available",
+      "hydrantId": 2
+    }
+  ],
+  "rates": [
+    {
+      "id": 1,
+      "type": "Commercial",
+      "rate": 1500
+    },
+    {
+      "id": 2,
+      "type": "Subsidised",
+      "rate": 600
+    }
+  ],
+  "bookings": [
+    {
+      "id": 1,
+      "customerId": 1,
+      "zoneId": 1,
+      "hydrantId": 1,
+      "bookingType": "Commercial",
+      "address": "House 12, Gulshan Avenue",
+      "deliveryDate": "2026-11-25",
+      "tankerSize": 3000,
+      "status": "Approved"
+    },
+    {
+      "id": 2,
+      "customerId": 1,
+      "zoneId": 1,
+      "hydrantId": 1,
+      "bookingType": "Subsidised",
+      "address": "House 12, Gulshan Avenue",
+      "deliveryDate": "2026-11-30",
+      "tankerSize": 1000,
+      "status": "Pending Approval"
+    },
+    {
+      "customerId": 1,
+      "bookingType": "Commercial",
+      "address": "saddar",
+      "deliveryDate": "2027-08-31",
+      "tankerSize": 6000,
+      "status": "Approved",
+      "createdAt": "2026-11-17T14:50:28.320Z",
+      "id": 3
+    }
+  ],
+  "subsidyApplications": [
+    {
+      "id": 1,
+      "customerId": 1,
+      "zoneId": 1,
+      "applicantType": "Low-income household",
+      "proofDetails": "Income certificate",
+      "status": "Approved"
+    }
+  ],
+  "trips": [
+    {
+      "id": 1,
+      "bookingId": 1,
+      "driverId": 4,
+      "tankerId": 1,
+      "status": "Assigned"
+    }
+  ],
+  "disputes": [
+    {
+      "id": 1,
+      "bookingId": 1,
+      "customerId": 1,
+      "zoneId": 1,
+      "reason": "Delivery was delayed.",
+      "status": "Pending"
+    }
+  ]
+}

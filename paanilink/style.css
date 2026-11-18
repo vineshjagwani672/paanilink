@@ -1,0 +1,195 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #edf7ff;
+  color: #1f2937;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.topbar {
+  background: #123a5a;
+  color: white;
+  padding: 14px 0;
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.panel,
+.card {
+  background: white;
+  border: 1px solid #dfeaf4;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+}
+
+.dashboard {
+  background: linear-gradient(180deg, #f3fbff 0%, #eaf4ff 100%);
+  border: 1px solid #cfe3f7;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.dashboard h2 {
+  color: #0b4f7a;
+  margin-bottom: 16px;
+}
+
+form {
+  display: grid;
+  gap: 10px;
+}
+
+label {
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+input,
+select,
+textarea,
+button {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #c7d8ea;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  font-weight: bold;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 16px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.primary {
+  background: #1e88e5;
+  color: white;
+}
+
+.danger {
+  background: #d93025;
+  color: white;
+}
+
+.success {
+  background: #2e8b57;
+  color: white;
+}
+
+.warning {
+  background: #f5a623;
+  color: white;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.section {
+  margin-top: 24px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+th,
+td {
+  border-bottom: 1px solid #dfeaf4;
+  padding: 10px;
+  text-align: left;
+}
+
+th {
+  background: #edf5ff;
+}
+
+.trip-list {
+  display: grid;
+  gap: 12px;
+}
+
+.trip-item {
+  background: white;
+  border: 1px solid #dfeaf4;
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.status {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.approved {
+  background: #dff6e9;
+  color: #1a7f4a;
+}
+
+.pending {
+  background: #fff3d6;
+  color: #9a6700;
+}
+
+.rejected {
+  background: #fde7e7;
+  color: #b42318;
+}
+
+@media (max-width: 360px) {
+  .nav {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .container {
+    padding: 12px;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  table {
+    min-width: 420px;
+  }
+}

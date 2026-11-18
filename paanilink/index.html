@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PaaniLink Water Tanker Booking and Dispatch System</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container nav">
+        <h1>PaaniLink</h1>
+        <button id="logoutBtn" class="btn danger hidden">Logout</button>
+      </div>
+    </header>
+
+    <main class="container">
+      <section id="loginSection" class="panel">
+        <h2>Login</h2>
+        <form id="loginForm">
+          <label>Email</label>
+          <input type="email" id="loginEmail" required />
+
+          <label>Password</label>
+          <input type="password" id="loginPassword" required />
+
+          <label>Role</label>
+          <select id="loginRole">
+            <option value="customer">Customer</option>
+            <option value="zone-officer">Zone Officer</option>
+            <option value="hydrant-operator">Hydrant Operator</option>
+            <option value="driver">Driver</option>
+            <option value="admin">Administrator</option>
+          </select>
+
+          <button type="submit" class="btn primary">Login</button>
+        </form>
+      </section>
+
+      <section id="customerDashboard" class="dashboard hidden">
+        <h2>Customer Dashboard</h2>
+        <div class="card-grid">
+          <div class="card">
+            <h3>New Booking</h3>
+            <form id="bookingForm">
+              <label>Booking Type</label>
+              <select id="bookingType">
+                <option value="Commercial">Commercial</option>
+                <option value="Subsidised">Subsidised</option>
+              </select>
+
+              <label>Address</label>
+              <input type="text" id="bookingAddress" />
+
+              <label>Delivery Date</label>
+              <input type="date" id="bookingDate" />
+
+              <label>Tanker Size</label>
+              <select id="bookingSize">
+                <option value="1000">1000 gallons</option>
+                <option value="3000">3000 gallons</option>
+                <option value="6000">6000 gallons</option>
+              </select>
+
+              <button type="submit" class="btn primary">Create Booking</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <h3>Subsidy Application</h3>
+            <form id="subsidyForm">
+              <label>Applicant Type</label>
+              <select id="subsidyType">
+                <option value="Low-income household">Low-income household</option>
+                <option value="Hospital">Hospital</option>
+                <option value="Mosque">Mosque</option>
+              </select>
+
+              <label>Proof Details</label>
+              <textarea id="subsidyProof" rows="3"></textarea>
+
+              <button type="submit" class="btn primary">Apply</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>My Bookings</h3>
+          <div id="customerBookings" class="table-wrap"></div>
+        </div>
+      </section>
+
+      <section id="zoneOfficerDashboard" class="dashboard hidden">
+        <h2>Zone Officer Dashboard</h2>
+        <div class="section">
+          <h3>Pending Subsidy Applications</h3>
+          <div id="subsidyApplications" class="table-wrap"></div>
+        </div>
+
+        <div class="section">
+          <h3>Pending Subsidised Bookings</h3>
+          <div id="pendingSubsidisedBookings" class="table-wrap"></div>
+        </div>
+
+        <div class="section">
+          <h3>Disputes</h3>
+          <div id="officerDisputes" class="table-wrap"></div>
+        </div>
+      </section>
+
+      <section id="hydrantOperatorDashboard" class="dashboard hidden">
+        <h2>Hydrant Operator Dashboard</h2>
+        <div class="card-grid">
+          <div class="card">
+            <h3>Hydrant Overview</h3>
+            <div id="hydrantSummary"></div>
+          </div>
+          <div class="card">
+            <h3>Approved Bookings</h3>
+            <div id="approvedBookings"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="driverDashboard" class="dashboard hidden">
+        <h2>Driver Dashboard</h2>
+        <div id="driverTrips" class="trip-list"></div>
+      </section>
+
+      <section id="adminDashboard" class="dashboard hidden">
+        <h2>Administrator Dashboard</h2>
+        <div class="card-grid">
+          <div class="card"><h3>Users</h3><div id="adminUsers"></div></div>
+          <div class="card"><h3>Zones</h3><div id="adminZones"></div></div>
+          <div class="card"><h3>Hydrants</h3><div id="adminHydrants"></div></div>
+          <div class="card"><h3>Tankers</h3><div id="adminTankers"></div></div>
+          <div class="card"><h3>Rates</h3><div id="adminRates"></div></div>
+          <div class="card"><h3>Booking Summary</h3><div id="adminSummary"></div></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
