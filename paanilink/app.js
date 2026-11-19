@@ -1,44 +1,236 @@
 const API_URL = 'http://localhost:3000';
+const DEMO_DATABASE_KEY = 'paanilink_demo_database';
+const CURRENT_USER_KEY = 'currentUser';
+const isGitHubPages = window.location.hostname.endsWith('github.io');
 
 const loginSection = document.getElementById('loginSection');
 const logoutBtn = document.getElementById('logoutBtn');
 const dashboards = document.querySelectorAll('.dashboard');
 
-// Simple Fetch functions for the mock API.
+async function initializeData() {
+  if (!isGitHubPages) {
+    return;
+  }
+
+  if (localStorage.getItem(DEMO_DATABASE_KEY)) {
+    return;
+  }
+
+  try {
+    const response = await fetch('./db.json');
+    if (!response.ok) {
+      throw new Error(`Unable to load db.json (HTTP ${response.status})`);
+    }
+
+    const database = await response.json();
+    if (!database || typeof database !== 'object' || Array.isArray(database)) {
+      throw new Error('db.json does not contain a valid database object');
+    }
+
+    localStorage.setItem(DEMO_DATABASE_KEY, JSON.stringify(database));
+  } catch (error) {
+    console.error('PaaniLink could not initialize data from db.json:', error);
+    throw new Error('The demo database could not be loaded. Please try again or reset the demo data.');
+  }
+}
+
+function getDemoDatabase() {
+  const storedDatabase = localStorage.getItem(DEMO_DATABASE_KEY);
+  if (!storedDatabase) {
+    throw new Error('Demo database is not initialized');
+  }
+
+  try {
+    return JSON.parse(storedDatabase);
+  } catch (error) {
+    console.error('PaaniLink found invalid demo data in localStorage:', error);
+    throw new Error('The saved demo database is invalid');
+  }
+}
+
+function saveDemoDatabase(database) {
+  localStorage.setItem(DEMO_DATABASE_KEY, JSON.stringify(database));
+}
+
+async function getCollection(collectionName) {
+  if (isGitHubPages) {
+    const database = getDemoDatabase();
+    if (!Object.prototype.hasOwnProperty.call(database, collectionName)) {
+      throw new Error(`Collection "${collectionName}" does not exist`);
+    }
+    if (!Array.isArray(database[collectionName])) {
+      throw new Error(`Collection "${collectionName}" is not a valid list`);
+    }
+    return database[collectionName];
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/${collectionName}`);
+    if (!response.ok) {
+      throw new Error(`JSON Server returned HTTP ${response.status}`);
+    }
+    const collection = await response.json();
+    if (!Array.isArray(collection)) {
+      throw new Error(`Collection "${collectionName}" is not a valid list`);
+    }
+    return collection;
+  } catch (error) {
+    console.error(`PaaniLink could not read collection "${collectionName}" from JSON Server:`, error);
+    throw new Error('Cannot connect to the local JSON Server.');
+  }
+}
+
+async function getRecord(collectionName, id) {
+  const collection = await getCollection(collectionName);
+  const record = collection.find((item) => Number(item.id) === Number(id));
+  if (!record) {
+    throw new Error(`Requested ${collectionName} record does not exist`);
+  }
+  return record;
+}
+
+async function createRecord(collectionName, record) {
+  if (isGitHubPages) {
+    const database = getDemoDatabase();
+    if (!Array.isArray(database[collectionName])) {
+      throw new Error(`Collection "${collectionName}" does not exist`);
+    }
+
+    const numericIds = database[collectionName]
+      .map((item) => Number(item.id))
+      .filter((itemId) => Number.isFinite(itemId));
+    const newId = numericIds.length ? Math.max(...numericIds) + 1 : 1;
+    const newRecord = { ...record, id: newId };
+    database[collectionName].push(newRecord);
+    saveDemoDatabase(database);
+    return newRecord;
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/${collectionName}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(record)
+    });
+    if (!response.ok) {
+      throw new Error(`JSON Server returned HTTP ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error(`PaaniLink could not create a ${collectionName} record:`, error);
+    throw new Error('Could not save the data. Check that JSON Server is running.');
+  }
+}
+
+async function updateRecord(collectionName, id, changes) {
+  if (isGitHubPages) {
+    const database = getDemoDatabase();
+    if (!Array.isArray(database[collectionName])) {
+      throw new Error(`Collection "${collectionName}" does not exist`);
+    }
+
+    const index = database[collectionName].findIndex((item) => Number(item.id) === Number(id));
+    if (index === -1) {
+      throw new Error(`Requested ${collectionName} record does not exist`);
+    }
+
+    database[collectionName][index] = {
+      ...database[collectionName][index],
+      ...changes
+    };
+    saveDemoDatabase(database);
+    return database[collectionName][index];
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/${collectionName}/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(changes)
+    });
+    if (!response.ok) {
+      throw new Error(`JSON Server returned HTTP ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error(`PaaniLink could not update ${collectionName}/${id}:`, error);
+    throw new Error('Could not update the data. Check that JSON Server is running.');
+  }
+}
+
+async function deleteRecord(collectionName, id) {
+  if (isGitHubPages) {
+    const database = getDemoDatabase();
+    if (!Array.isArray(database[collectionName])) {
+      throw new Error(`Collection "${collectionName}" does not exist`);
+    }
+
+    const index = database[collectionName].findIndex((item) => Number(item.id) === Number(id));
+    if (index === -1) {
+      throw new Error(`Requested ${collectionName} record does not exist`);
+    }
+
+    const deleted = database[collectionName].splice(index, 1)[0];
+    saveDemoDatabase(database);
+    return deleted;
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/${collectionName}/${id}`, {
+      method: 'DELETE'
+    });
+    if (!response.ok) {
+      throw new Error(`JSON Server returned HTTP ${response.status}`);
+    }
+    return true;
+  } catch (error) {
+    console.error(`PaaniLink could not delete ${collectionName}/${id}:`, error);
+    throw new Error('Could not delete the data. Check that JSON Server is running.');
+  }
+}
+
+// Existing API function names remain as adapters for the dashboard code.
 async function getData(endpoint) {
-  const response = await fetch(`${API_URL}/${endpoint}`);
-  return response.json();
+  return getCollection(endpoint);
 }
 
 async function addData(endpoint, data) {
-  const response = await fetch(`${API_URL}/${endpoint}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
-  });
-  return response.json();
+  return createRecord(endpoint, data);
 }
 
 async function updateData(endpoint, id, data) {
-  const response = await fetch(`${API_URL}/${endpoint}/${id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
-  });
-  return response.json();
+  return updateRecord(endpoint, id, data);
+}
+
+async function deleteData(endpoint, id) {
+  return deleteRecord(endpoint, id);
+}
+
+// Removes temporary browser demo data. Run resetDemoData() from the console to start fresh.
+function resetDemoData() {
+  localStorage.removeItem(DEMO_DATABASE_KEY);
+  window.location.reload();
 }
 
 function getLoggedUser() {
-  const user = localStorage.getItem('paaniUser');
-  return user ? JSON.parse(user) : null;
+  const user = localStorage.getItem(CURRENT_USER_KEY);
+  if (!user) return null;
+
+  try {
+    return JSON.parse(user);
+  } catch (error) {
+    console.error('PaaniLink found invalid currentUser data:', error);
+    localStorage.removeItem(CURRENT_USER_KEY);
+    return null;
+  }
 }
 
 function saveLoggedUser(user) {
-  localStorage.setItem('paaniUser', JSON.stringify(user));
+  localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
 }
 
 function clearLoggedUser() {
-  localStorage.removeItem('paaniUser');
+  localStorage.removeItem(CURRENT_USER_KEY);
 }
 
 function showDashboard(role) {
@@ -53,11 +245,10 @@ function showDashboard(role) {
   const activeDashboardId = dashboardMap[role] || null;
 
   dashboards.forEach((dashboard) => {
-    const isActive = dashboard.id === activeDashboardId;
-    dashboard.classList.toggle('hidden', !isActive);
+    dashboard.classList.toggle('hidden', dashboard.id !== activeDashboardId);
   });
 
-  if (role) {
+  if (activeDashboardId) {
     loginSection.classList.add('hidden');
     logoutBtn.classList.remove('hidden');
   } else {
@@ -71,27 +262,47 @@ async function loginUser(event) {
   event.preventDefault();
 
   const email = document.getElementById('loginEmail').value.trim();
-  const password = document.getElementById('loginPassword').value.trim();
-  const role = document.getElementById('loginRole').value;
+  const password = document.getElementById('loginPassword').value;
 
   if (!email || !password) {
-    alert('Please enter email and password.');
+    alert('Please enter both email and password.');
     return;
   }
 
-  const users = await getData('users');
-  const user = users.find(
-    (item) => item.email === email && item.password === password && item.role === role
-  );
+  try {
+    const users = await getCollection('users');
+    if (!Array.isArray(users)) {
+      throw new Error('The users collection is missing or invalid');
+    }
 
-  if (!user) {
-    alert('Invalid login details for this role.');
-    return;
+    const normalizedEmail = email.toLowerCase();
+    const user = users.find((item) =>
+      typeof item.email === 'string' &&
+      item.email.trim().toLowerCase() === normalizedEmail &&
+      item.password === password
+    );
+
+    if (!user) {
+      alert('Invalid email or password.');
+      return;
+    }
+
+    const knownRoles = ['customer', 'zone-officer', 'hydrant-operator', 'driver', 'admin'];
+    if (!knownRoles.includes(user.role)) {
+      console.error(`PaaniLink login found an unknown role: ${user.role}`);
+      alert('This account has an unknown role.');
+      return;
+    }
+
+    saveLoggedUser(user);
+    showDashboard(user.role);
+    await loadRoleData(user.role);
+  } catch (error) {
+    console.error('PaaniLink login failed:', error);
+    alert(error.message === 'Demo database is not initialized'
+      ? 'The demo database could not be loaded. Please refresh and try again.'
+      : 'Unable to sign in. Check the data source and try again.');
   }
-
-  saveLoggedUser(user);
-  showDashboard(role);
-  loadRoleData(role);
 }
 
 function logoutUser() {
@@ -570,16 +781,31 @@ document.addEventListener('click', async (event) => {
   }
 });
 
-document.getElementById('loginForm').addEventListener('submit', loginUser);
-document.getElementById('bookingForm').addEventListener('submit', createBooking);
-document.getElementById('subsidyForm').addEventListener('submit', submitSubsidy);
-logoutBtn.addEventListener('click', logoutUser);
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    await initializeData();
+  } catch (error) {
+    console.error('PaaniLink startup data initialization failed:', error);
+    alert(error.message);
+  }
 
-// On page load, check if a user is already logged in.
-const currentUser = getLoggedUser();
-if (currentUser) {
-  showDashboard(currentUser.role);
-  loadRoleData(currentUser.role);
-} else {
-  showDashboard(null);
-}
+  document.getElementById('loginForm').addEventListener('submit', loginUser);
+  document.getElementById('bookingForm').addEventListener('submit', createBooking);
+  document.getElementById('subsidyForm').addEventListener('submit', submitSubsidy);
+  logoutBtn.addEventListener('click', logoutUser);
+
+  const currentUser = getLoggedUser();
+  if (currentUser) {
+    const knownRoles = ['customer', 'zone-officer', 'hydrant-operator', 'driver', 'admin'];
+    if (knownRoles.includes(currentUser.role)) {
+      showDashboard(currentUser.role);
+      await loadRoleData(currentUser.role);
+    } else {
+      console.error(`PaaniLink found a stored user with unknown role: ${currentUser.role}`);
+      clearLoggedUser();
+      showDashboard(null);
+    }
+  } else {
+    showDashboard(null);
+  }
+});

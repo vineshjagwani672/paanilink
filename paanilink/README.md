@@ -1,49 +1,35 @@
 # PaaniLink Water Tanker Booking and Dispatch System
 
-## Technologies used
-- HTML
-- CSS
-- Vanilla JavaScript
-- Fetch API
-- JSON Server
+A vanilla HTML, CSS and JavaScript frontend demonstration.
 
-## File structure
-```text
-paanilink/
-├── index.html
-├── style.css
-├── app.js
-├── db.json
-└── README.md
-```
+## Local mode
 
-## Install JSON Server
-```bash
-npm install -g json-server
-```
+1. Install JSON Server if needed:
+   ```bash
+   npm install -g json-server
+   ```
+2. Start the mock API from the `paanilink` folder:
+   ```bash
+   json-server --watch db.json --port 3000
+   ```
+3. Run `index.html` with VS Code Live Server.
 
-## Run the mock API
-```bash
-db.json
-```
+Local mode reads and modifies `db.json` through JSON Server using `http://localhost:3000`.
 
-Then start the server:
-```bash
-json-server --watch db.json --port 3000
-```
+## GitHub Pages mode
 
-## Run the frontend
-Use VS Code Live Server and open the project in the browser.
+Open the deployed `index.html` through GitHub Pages. The app fetches `./db.json` only once, copies it into browser `localStorage`, and uses it for login and create/update/delete operations. Demo changes are temporary and browser-specific; they do not permanently modify `db.json`. Run `resetDemoData()` in the browser console to restore fresh demo data.
+
+GitHub Pages configuration must publish the folder that contains `index.html`.
 
 ## Demo accounts
-- Customer: customer@paanilink.test / customer123
-- Zone Officer: officer@paanilink.test / officer123
-- Hydrant Operator: operator@paanilink.test / operator123
-- Driver: driver@paanilink.test / driver123
-- Administrator: admin@paanilink.test / admin123
 
-## Short booking workflow
-A customer logs in and creates a booking. Commercial bookings are approved right away. Subsidised bookings are reviewed by the Zone Officer. The Hydrant Operator then checks quota and assigns a tanker and driver. The driver updates the trip status from Assigned to Arrived, Delivered or Failed. The customer can confirm or dispute the delivery.
+- Customer: `customer@paanilink.test` / `customer123`
+- Zone Officer: `officer@paanilink.test` / `officer123`
+- Hydrant Operator: `operator@paanilink.test` / `operator123`
+- Driver: `driver@paanilink.test` / `driver123`
+- Administrator: `admin@paanilink.test` / `admin123`
 
-## Project note
-This is a frontend mock project for learning and demonstration. It does not include real authentication, database rules or backend security.
+## Security note
+
+The mock passwords are for a frontend class demonstration only. They are not secure authentication and must not be used for real users or sensitive data.

@@ -28,6 +28,19 @@ body {
   align-items: center;
 }
 
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.6rem;
+}
+
+.brand-logo {
+  width: 42px;
+  height: 42px;
+  filter: drop-shadow(0 3px 5px rgba(22, 137, 223, 0.25));
+}
+
 .panel,
 .card {
   background: white;
@@ -36,6 +49,35 @@ body {
   padding: 20px;
   margin-bottom: 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+}
+
+.panel {
+  max-width: 440px;
+  margin: 48px auto;
+  border-top: 5px solid #1689df;
+  background: linear-gradient(180deg, #ffffff 0%, #f4fbff 100%);
+}
+
+.panel h2 {
+  color: #0b4f7a;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.panel form {
+  gap: 12px;
+}
+
+.panel input,
+.panel select {
+  border: 1px solid #b9d7eb;
+  background: #ffffff;
+}
+
+.panel input:focus,
+.panel select:focus {
+  outline: 2px solid #75c6fa;
+  border-color: #1689df;
 }
 
 .dashboard {
